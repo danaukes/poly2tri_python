@@ -32,6 +32,7 @@
 #include "sweep_context.h"
 #include "advancing_front.h"
 #include "../common/utils.h"
+#include "../common/math_defines.h"
 
 namespace p2t {
 

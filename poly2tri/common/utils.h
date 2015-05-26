@@ -34,6 +34,7 @@
 
 #include <exception>
 #include <math.h>
+#include "math_defines.h"
 
 namespace p2t {
 
