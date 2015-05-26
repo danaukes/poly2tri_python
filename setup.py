@@ -1,29 +1,23 @@
 import os
-from setuptools import setup
+from distutils.core import setup
 from distutils.extension import Extension
-
-import sys
-if 'setuptools.extension' in sys.modules:
-    m = sys.modules['setuptools.extension']
-    m.Extension.__dict__ = m._Extension.__dict__
+from Cython.Build import cythonize
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+cython_sources =  []
+cython_sources.append('src/p2t.pyx')
 
-CYTHON_SOURCES =  """src/p2t.pyx""".split("\n")
+cpp_sources = []
+cpp_sources.append('poly2tri/common/shapes.cc')
+cpp_sources.append('poly2tri/sweep/advancing_front.cc')
+cpp_sources.append('poly2tri/sweep/cdt.cc')
+cpp_sources.append('poly2tri/sweep/sweep.cc')
+cpp_sources.append('poly2tri/sweep/sweep_context.cc')
 
-CPP_SOURCES = """poly2tri/common/shapes.cc
-poly2tri/sweep/advancing_front.cc
-poly2tri/sweep/cdt.cc
-poly2tri/sweep/sweep.cc
-poly2tri/sweep/sweep_context.cc""".split("\n")
-
-mod_math = Extension(
-    "p2t",
-    CYTHON_SOURCES + CPP_SOURCES,
-    language = "c++"
-)
+extension = Extension("p2t",cython_sources + cpp_sources,language = "c++")
+ext_modules = cythonize([extension])
 
 setup(
     name = "poly2tri",
@@ -32,8 +26,5 @@ setup(
     description = "A 2D constrained Delaunay triangulation library",
     long_description = read('README'),
     url = "http://code.google.com/p/poly2tri/",
-
-    ext_modules = [mod_math],
-    setup_requires = ["cython==0.14.1", "setuptools_cython==0.2.1"],
-    install_requires = ["cython==0.14.1"],
+    ext_modules = ext_modules,
 )
